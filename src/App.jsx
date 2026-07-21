@@ -2846,25 +2846,29 @@ function WeeklyStatusReport({ project, clientName, programName, rida, practices,
       <div style={{ padding: "0 28px 26px" }}>
         {/* 2. Practice progress */}
         <ReportSection num={2} title="Practice Progress">
-          {stagesData.map((st) => (
-            <div key={st.key} style={{ marginBottom: 14, opacity: st.key > currentStage.key ? 0.45 : 1 }}>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>
-                Stage {st.key} — {st.name} ({st.closed}/{st.total})
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 8 }}>
-                {st.list.map((pr) => (
-                  <div key={pr.id} style={{ border: "1px solid #E2E8F0", borderRadius: 8, padding: "8px 12px", background: "#F9FAFB" }}>
-                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: "#0F172A", marginBottom: 6, lineHeight: 1.3 }}>{pr.name}</div>
-                    <div style={{ height: 6, borderRadius: 4, background: "#E2E8F0" }}>
-                      <div style={{ height: "100%", width: pr.closed ? "100%" : "0%", borderRadius: 4, background: "#10B981" }} />
-                    </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {stagesData.map((st) => {
+              const pct = st.total > 0 ? Math.round((st.closed / st.total) * 100) : 0;
+              const isActive = st.key === currentStage.key;
+              const isFuture = st.key > currentStage.key;
+              const barColor = pct === 100 ? "#10B981" : isActive ? "#F97316" : "#CBD5E1";
+              return (
+                <div key={st.key} style={{ display: "grid", gridTemplateColumns: "160px 1fr 48px 36px", alignItems: "center", gap: 10, opacity: isFuture ? 0.4 : 1 }}>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#0F172A", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: "#94A3B8", marginRight: 5 }}>S{st.key}</span>
+                    {st.name}
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
-          <div style={{ display: "flex", justifyContent: "flex-end", fontFamily: "'Fira Code', monospace", fontSize: 12, color: "#475569", marginTop: 4 }}>
-            Weighted progress: <strong style={{ color: "#0F172A", marginLeft: 4 }}>{Math.round(weightedPct)}%</strong>
+                  <div style={{ height: 7, borderRadius: 4, background: "#E2E8F0", overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${pct}%`, borderRadius: 4, background: barColor, transition: "width 0.3s" }} />
+                  </div>
+                  <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: "#475569", textAlign: "right" }}>{st.closed}/{st.total}</div>
+                  <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: barColor, fontWeight: 700, textAlign: "right" }}>{pct}%</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 6, fontFamily: "'Fira Code', monospace", fontSize: 12, color: "#475569", marginTop: 10, paddingTop: 10, borderTop: "1px solid #E2E8F0" }}>
+            Weighted progress: <strong style={{ color: "#0F172A" }}>{Math.round(weightedPct)}%</strong>
           </div>
         </ReportSection>
 
