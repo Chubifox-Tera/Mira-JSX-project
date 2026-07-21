@@ -3042,7 +3042,9 @@ function ReportesView({ projects, clients, programs, programName, clientName, ri
       return projects.map((p) => {
         const c = changeByProject[p.id];
         const k = kpisByProject[p.id];
-        return { label: p.name, value: `AI: ${c ? c.satisfactionIA.toFixed(1) : "—"}/10 · Stakeholders: ${k ? k.stakeholderSatisfaction.toFixed(1) : "—"}/10` };
+        const spaceS = c?.space?.s?.level ?? "—";
+        const stakeholder = k ? k.stakeholderSatisfaction.toFixed(1) : "—";
+        return { label: p.name, value: `Team S (SPACE): ${spaceS} · Stakeholders: ${stakeholder}/10` };
       });
     }
     if (key === "beneficios") {
